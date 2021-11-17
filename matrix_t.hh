@@ -8,6 +8,8 @@
 #define integer          long long
 #define stop             exit(1)
 
+#define eps              1e-7
+
 #define err              "   ERROR:    "
 
 #define dimension_error  std::cerr << err << "Invalid dimension(s). Dimensions must be non-negative integers." << std::endl
@@ -27,17 +29,19 @@ public:
     matrix_t(const matrix_t& mat);
     ~matrix_t();
 
-    matrix_t operator=(const matrix_t& other);
-    matrix_t operator+(const matrix_t& other);
-    // matrix_t operator- (matrix_t mat);
-    // matrix_t operator* (matrix_t mat);
-    // matrix_t operator/ (matrix_t mat);
-    bool operator==(const matrix_t& other) const;
-    double* operator[](integer r);     // Not memory safe, mutable.....
+    matrix_t operator= (const matrix_t& other);
+    matrix_t operator+ (const matrix_t& other);
+    matrix_t operator- (const matrix_t& other);
+    matrix_t operator* (const matrix_t& other);
+    bool     operator==(const matrix_t& other) const;
+    double*  operator[](integer r);          // Not memory safe, mutable.....
 
     double at(integer i, integer j) const;   // Memory safe, immutable....
     integer row_count() const;
     integer column_count() const;
+    // matrix_t scalar_mult(double scalar);
+    // matrix_t scalar_div (double scalar);
+    // void make_identity_matrix();
 };
 
 #endif

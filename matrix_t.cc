@@ -1,4 +1,5 @@
 #include "matrix_t.hh"
+#include <cmath>
 
 matrix_t::matrix_t(integer r, integer c) {
     if (r < 0 || c < 0) {
@@ -126,6 +127,41 @@ matrix_t matrix_t::operator+(const matrix_t& other) {
     return *this;
 }
 
+matrix_t matrix_t::operator-(const matrix_t& other) {
+    if (row != other.row_count() || column != other.column_count()) {
+        equality_error;
+        stop;
+    }
+
+    for (integer i = 0; i < row; ++i) {
+        for (integer j = 0; j < column; ++j) {
+            matrix[i][j] -= other.at(i, j);
+        }
+    }
+
+    return *this;
+}
+
+matrix_t matrix_t::operator*(const matrix_t& other) {
+    if (column != other.row_count()) {
+        std::cerr << err << "For matrix multiplication, the number of columns in the first matrix must be equal to the number of rows in the second column." << std::endl;
+        stop;
+    }
+
+    matrix_t new_matrix(row, other.column_count());
+    
+    for (integer i = 0; i < new_matrix.row_count(); ++i) {
+        for (integer j = 0; j < new_matrix.column_count(); ++j) {
+            for (integer k = 0; k < column; ++k) {
+                new_matrix[i][j] += this->at(i, k) * other.at(k, j);
+            }
+        }
+    }
+
+    *this = new_matrix;
+    return *this;
+}
+
 bool matrix_t::operator==(const matrix_t& other) const {
     if (row != other.row_count() || column != other.column_count()) {
         return false;
@@ -133,7 +169,7 @@ bool matrix_t::operator==(const matrix_t& other) const {
 
     for (integer i = 0; i < row; ++i) {
         for (integer j = 0; j < column; ++j) {
-            if (this->at(i, j) != other.at(i, j)) {
+            if (std::fabs(this->at(i, j) - other.at(i, j)) > eps) {
                 return false;
             }
         }
