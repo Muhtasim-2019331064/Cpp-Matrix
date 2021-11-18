@@ -118,6 +118,59 @@ matrix_t matrix_t::operator+(const matrix_t& other) {
         stop;
     }
 
+    matrix_t new_matrix(row, column);
+
+    for (integer i = 0; i < row; ++i) {
+        for (integer j = 0; j < column; ++j) {
+            new_matrix[i][j] = this->at(i, j) + other.at(i, j);
+        }
+    }
+
+    return new_matrix;
+}
+
+matrix_t matrix_t::operator-(const matrix_t& other) {
+    if (row != other.row_count() || column != other.column_count()) {
+        equality_error;
+        stop;
+    }
+
+    matrix_t new_matrix(row, column);
+
+    for (integer i = 0; i < row; ++i) {
+        for (integer j = 0; j < column; ++j) {
+            new_matrix[i][j] = this->at(i, j) - other.at(i, j);
+        }
+    }
+
+    return new_matrix;
+}
+
+matrix_t matrix_t::operator*(const matrix_t& other) {
+    if (column != other.row_count()) {
+        std::cerr << err << "For matrix multiplication, the number of columns in the first matrix must be equal to the number of rows in the second column." << std::endl;
+        stop;
+    }
+
+    matrix_t new_matrix(row, other.column_count());
+    
+    for (integer i = 0; i < new_matrix.row_count(); ++i) {
+        for (integer j = 0; j < new_matrix.column_count(); ++j) {
+            for (integer k = 0; k < column; ++k) {
+                new_matrix[i][j] += this->at(i, k) * other.at(k, j);
+            }
+        }
+    }
+
+    return new_matrix;
+}
+
+matrix_t matrix_t::operator+=(const matrix_t& other) {
+    if (row != other.row_count() || column != other.column_count()) {
+        equality_error;
+        stop;
+    }
+
     for (integer i = 0; i < row; ++i) {
         for (integer j = 0; j < column; ++j) {
             matrix[i][j] += other.at(i, j);
@@ -127,7 +180,7 @@ matrix_t matrix_t::operator+(const matrix_t& other) {
     return *this;
 }
 
-matrix_t matrix_t::operator-(const matrix_t& other) {
+matrix_t matrix_t::operator-=(const matrix_t& other) {
     if (row != other.row_count() || column != other.column_count()) {
         equality_error;
         stop;
@@ -142,7 +195,7 @@ matrix_t matrix_t::operator-(const matrix_t& other) {
     return *this;
 }
 
-matrix_t matrix_t::operator*(const matrix_t& other) {
+matrix_t matrix_t::operator*=(const matrix_t& other) {
     if (column != other.row_count()) {
         std::cerr << err << "For matrix multiplication, the number of columns in the first matrix must be equal to the number of rows in the second column." << std::endl;
         stop;
@@ -202,4 +255,53 @@ double matrix_t::at(integer i, integer j) const {
     }
 
     return matrix[i][j];
+}
+
+matrix_t matrix_t::scalar_mult(double scalar) {
+    matrix_t new_matrix(row, column);
+
+    for (integer i = 0; i < row; ++i) {
+        for (integer j = 0; j < column; ++j) {
+            new_matrix[i][j] = this->at(i, j) * scalar;
+        }
+    }
+
+    return new_matrix;
+}
+
+matrix_t matrix_t::scalar_div(double scalar) {
+    matrix_t new_matrix(row, column);
+
+    for (integer i = 0; i < row; ++i) {
+        for (integer j = 0; j < column; ++j) {
+            new_matrix[i][j] = this->at(i, j) / scalar;
+        }
+    }
+
+    return new_matrix;
+}
+
+matrix_t matrix_t::transpose() {
+    matrix_t transpose_matrix(column, row);
+
+    for (integer i = 0; i < row; ++i) {
+        for (integer j = 0; j < column; ++j) {
+            transpose_matrix[j][i] = this->at(i, j);
+        }
+    }
+
+    return transpose_matrix;
+}
+
+void matrix_t::make_identity_matrix() {
+    if (row != column || row == 0) {
+        identity_error;
+        stop;
+    }
+
+    for (integer i = 0; i < row; ++i) {
+        for (integer j = 0; j < column; ++j) {
+            matrix[i][j] = (i == j ? 1: 0);
+        }
+    }
 }
